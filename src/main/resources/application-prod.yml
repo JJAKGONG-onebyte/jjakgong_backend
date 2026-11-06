@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate # 운영에서는 절대 update/create 금지
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
