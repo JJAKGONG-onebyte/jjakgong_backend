@@ -130,14 +130,4 @@ docker compose down -v
 docker compose up -d
 ```
 
-- 엔티티 구조를 바꾼 PR은 **PR 설명에 꼭 적어 주세요.** 다른 팀원이 DB를 초기화해야 할 수 있습니다.
-
-## 9. 자주 나는 에러
-
-| 증상                                         | 원인                                                 |
-| -------------------------------------------- | ---------------------------------------------------- |
-| `should be declared in a file named ○○.java` | 파일명이 클래스명과 다름                             |
-| `Access denied for user`                     | DB 계정이 compose와 `application-local.yml`에서 다름 |
-| `Port 3306 already in use`                   | 내 PC의 다른 MySQL이 켜져 있음                       |
-| `cannot find symbol: getXxx()`               | Lombok 확장이 없거나 설정 안 됨                      |
-| `git push` 403                               | 저장소 Write 권한 없음 → 팀장에게 문의               |
+- 엔티티 구조를 바꾼 PR은 **PR 설명에 꼭 적어 주세요.**
