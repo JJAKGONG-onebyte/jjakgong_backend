@@ -1,6 +1,6 @@
 # 📢 백엔드 개발 환경 안내
 
-## 1. 시작하기 (이것부터!)
+## 1. 시작하기
 
 저장소: https://github.com/JJAKGONG-onebyte/jjakgong_backend
 기본 작업 브랜치: `develop` (main에는 작업하지 않습니다)
