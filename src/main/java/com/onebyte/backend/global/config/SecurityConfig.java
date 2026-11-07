@@ -1,6 +1,6 @@
 package com.onebyte.backend.global.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.onebyte.backend.global.exception.ErrorCode;
 import com.onebyte.backend.global.jwt.JwtAuthenticationFilter;
 import com.onebyte.backend.global.response.ApiResponse;

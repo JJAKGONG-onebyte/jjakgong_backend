@@ -1,5 +1,6 @@
 package com.onebyte.backend.global.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -13,36 +14,56 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private final SecretKey key;
-    private final long accessExp;
+    private static final String TYPE_CLAIM = "type";
+    public static final String ACCESS = "access";
+    public static final String REFRESH = "refresh";
 
-    public JwtProvider(@Value("${jwt.secret}") String secret,
-                       @Value("${jwt.access-expiration-ms}") long accessExp) {
+    private final SecretKey key;
+    private final long accessExpirationMs;
+    private final long refreshExpirationMs;
+
+    public JwtProvider(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.access-expiration-ms}") long accessExpirationMs,
+            @Value("${jwt.refresh-expiration-ms}") long refreshExpirationMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessExp = accessExp;
+        this.accessExpirationMs = accessExpirationMs;
+        this.refreshExpirationMs = refreshExpirationMs;
     }
 
     public String createAccessToken(Long userId) {
+        return build(userId, ACCESS, accessExpirationMs);
+    }
+
+    public String createRefreshToken(Long userId) {
+        return build(userId, REFRESH, refreshExpirationMs);
+    }
+
+    public boolean validate(String token, String expectedType) {
+        try {
+            return expectedType.equals(parse(token).get(TYPE_CLAIM, String.class));
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public Long getUserId(String token) {
+        return Long.valueOf(parse(token).getSubject());
+    }
+
+    private String build(Long userId, String type, long expMs) {
         Date now = new Date();
         return Jwts.builder()
                 .subject(String.valueOf(userId))
+                .claim(TYPE_CLAIM, type)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + accessExp))
+                .expiration(new Date(now.getTime() + expMs))
                 .signWith(key)
                 .compact();
     }
 
-    public Long getUserId(String token) {
-        return Long.valueOf(Jwts.parser().verifyWith(key).build()
-                .parseSignedClaims(token).getPayload().getSubject());
-    }
-
-    public boolean validate(String token) {
-        try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
+    private Claims parse(String token) {
+        return Jwts.parser().verifyWith(key).build()
+                .parseSignedClaims(token).getPayload();
     }
 }
