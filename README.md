@@ -107,17 +107,15 @@ domain/user
 ```
 
 ## 7. 공통 응답 / 예외 처리 규칙
-
-- 모든 API 응답은 `ApiResponse`로 감쌉니다.
-
-```json
-{ "success": true, "data": { ... }, "message": null }
-```
-
-- 에러는 `throw new CustomException(HttpStatus.BAD_REQUEST, "메시지")` 형태로 던집니다. (`GlobalExceptionHandler`가 알아서 응답으로 변환)
-- 날짜/시간 형식은 ISO 8601: `2026-11-06T14:30:00`
-- 엔티티는 `BaseEntity`를 상속해서 `createdAt`, `updatedAt`을 자동 관리합니다.
-- **엔티티를 응답으로 직접 반환하지 말고 DTO로 변환**해서 반환합니다.
+* 모든 API 응답은 `ApiResponse`로 감쌉니다.
+  * 성공: `{ "success": true, "data": { ... } }`
+  * 실패: `{ "success": false, "error": { "code": "...", "message": "..." } }`
+* 에러는 `throw new CustomException(ErrorCode.XXX)` 형태로 던집니다. (`GlobalExceptionHandler`가 알아서 응답으로 변환)
+  * 새 에러는 `ErrorCode` enum에 추가해서 사용합니다.
+* 로그인 사용자 ID는 컨트롤러에서 `@AuthenticationPrincipal Long userId`로 꺼냅니다.
+* 날짜/시간 형식은 ISO 8601: `2026-11-06T14:30:00`
+* 엔티티는 `BaseEntity`를 상속해서 `createdAt`, `updatedAt`을 자동 관리합니다.
+* 엔티티를 응답으로 직접 반환하지 말고 DTO로 변환해서 반환합니다.
 
 ## 8. DB 사용 규칙
 
