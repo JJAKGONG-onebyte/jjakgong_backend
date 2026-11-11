@@ -1,9 +1,13 @@
 package com.onebyte.backend.domain.studysession.service;
 
 import com.onebyte.backend.domain.material.entity.StudyMaterial;
+import com.onebyte.backend.domain.studysession.dto.ActiveSessionResponse;
+import com.onebyte.backend.domain.studysession.dto.HeartbeatResponse;
 import com.onebyte.backend.domain.studysession.dto.SessionResponse;
 import com.onebyte.backend.domain.studysession.dto.StartSessionRequest;
+import com.onebyte.backend.domain.studysession.entity.StudyBreak;
 import com.onebyte.backend.domain.studysession.entity.StudySession;
+import com.onebyte.backend.domain.studysession.repository.StudyBreakRepository;
 import com.onebyte.backend.domain.studysession.repository.StudySessionRepository;
 import com.onebyte.backend.domain.studysetting.entity.ScreenMode;
 import com.onebyte.backend.domain.studysetting.entity.UserStudySetting;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,7 +29,9 @@ import java.util.Optional;
 public class StudySessionService {
 
     private final StudySessionRepository studySessionRepository;
+    private final StudyBreakRepository studyBreakRepository;
     private final StudySessionCloser studySessionCloser;
+    private final StudySessionFinder studySessionFinder;
     // User, UserStudySetting, StudyMaterial은 다른 담당 도메인이라 Repository가 생기기 전까지 EntityManager로 조회
     private final EntityManager em;
 
@@ -76,6 +83,41 @@ public class StudySessionService {
                 .build();
 
         return SessionResponse.from(studySessionRepository.save(session));
+    }
+
+    /**
+     * 진행 중 세션 조회 (새로고침·재접속 시 복구용).
+     * 10분 넘게 활동이 없던 세션은 마지막 활동 시각 기준으로 종료하고 404를 던진다.
+     */
+    @Transactional(noRollbackFor = CustomException.class)
+    public ActiveSessionResponse getActive(Long userId) {
+        StudySession session = studySessionRepository
+                .findFirstByUser_IdAndEndedAtIsNullOrderByStartedAtDesc(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_ACTIVE_SESSION));
+
+        if (studySessionCloser.isInactive(session, LocalDateTime.now())) {
+            studySessionCloser.closeAsInactive(session);
+            throw new CustomException(ErrorCode.NO_ACTIVE_SESSION);
+        }
+
+        long totalBreakSeconds = 0;
+        StudyBreak currentBreak = null;
+        List<StudyBreak> breaks = studyBreakRepository.findAllBySession_Id(session.getId());
+        for (StudyBreak studyBreak : breaks) {
+            if (studyBreak.isOngoing()) {
+                currentBreak = studyBreak;
+            } else {
+                totalBreakSeconds += studyBreak.durationSecondsUntil(studyBreak.getEndedAt());
+            }
+        }
+        return ActiveSessionResponse.of(session, totalBreakSeconds, currentBreak);
+    }
+
+    /** 세션 활동 유지 (학습 화면이 1분마다 호출) */
+    @Transactional(noRollbackFor = CustomException.class)
+    public HeartbeatResponse heartbeat(Long sessionId, Long userId) {
+        StudySession session = studySessionFinder.getActiveSession(sessionId, userId);
+        return new HeartbeatResponse(session.getId(), session.getLastActivityAt());
     }
 
     private UserStudySetting getOrCreateSetting(User user, Long userId) {
