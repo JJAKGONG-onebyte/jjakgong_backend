@@ -67,4 +67,8 @@ public class UserStudySetting {
         setting.screenMode = ScreenMode.VIDEO_CALL;
         return setting;
     }
+
+    public void changeScreenMode(ScreenMode screenMode) {
+        this.screenMode = screenMode;
+    }
 }

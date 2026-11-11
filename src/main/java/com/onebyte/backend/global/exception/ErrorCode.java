@@ -20,7 +20,12 @@ public enum ErrorCode {
 
     // ===== 학습 세션 =====
     SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "학습 세션을 찾을 수 없습니다."),
-    SESSION_ALREADY_ENDED(HttpStatus.CONFLICT, "이미 종료된 학습 세션입니다.");
+    SESSION_ALREADY_ENDED(HttpStatus.CONFLICT, "이미 종료된 학습 세션입니다."),
+    ACTIVE_SESSION_EXISTS(HttpStatus.CONFLICT, "이미 진행 중인 학습 세션이 있습니다."),
+    WEBCAM_DISABLED(HttpStatus.CONFLICT, "웹캠 사용이 꺼져 있어 집중 트래킹을 켤 수 없습니다."),
+
+    // ===== 학습 자료 =====
+    MATERIAL_NOT_FOUND(HttpStatus.NOT_FOUND, "선택한 학습자료를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
