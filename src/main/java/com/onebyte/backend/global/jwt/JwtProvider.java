@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtProvider {
@@ -54,6 +55,7 @@ public class JwtProvider {
     private String build(Long userId, String type, long expMs) {
         Date now = new Date();
         return Jwts.builder()
+                .id(UUID.randomUUID().toString())   // 같은 초에 발급해도 토큰이 겹치지 않게 함
                 .subject(String.valueOf(userId))
                 .claim(TYPE_CLAIM, type)
                 .issuedAt(now)
