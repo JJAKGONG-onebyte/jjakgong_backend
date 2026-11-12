@@ -36,4 +36,18 @@ public class StudyBreak {
         studyBreak.startedAt = LocalDateTime.now();
         return studyBreak;
     }
+
+    public boolean isOngoing() {
+        return endedAt == null;
+    }
+
+    public void end(LocalDateTime endedAt) {
+        this.endedAt = endedAt;
+    }
+
+    /** until 시각까지의 휴식 시간(초). 진행 중인 휴식은 until까지로 계산 */
+    public long durationSecondsUntil(LocalDateTime until) {
+        LocalDateTime end = (endedAt != null && endedAt.isBefore(until)) ? endedAt : until;
+        return Math.max(0, java.time.Duration.between(startedAt, end).getSeconds());
+    }
 }
