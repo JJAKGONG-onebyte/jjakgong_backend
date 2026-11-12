@@ -82,11 +82,11 @@ public class PasswordResetService {
         reset.markUsed();
         user.changePassword(passwordEncoder.encode(request.newPassword()));
         // 비밀번호가 바뀌면 기존에 로그인된 모든 기기의 리프레시 토큰을 폐기
-        refreshTokenRepository.revokeAllByUserId(user.getUserId());
+        refreshTokenRepository.revokeAllByUserId(user.getId());
     }
 
     private String hash(User user, String code) {
-        return HashUtil.hmacSha256Hex(hmacSecret, user.getUserId() + ":" + code);
+        return HashUtil.hmacSha256Hex(hmacSecret, user.getId() + ":" + code);
     }
 
     private String normalizeEmail(String email) {

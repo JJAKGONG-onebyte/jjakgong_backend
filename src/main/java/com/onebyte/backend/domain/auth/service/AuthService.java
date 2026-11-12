@@ -92,7 +92,7 @@ public class AuthService {
         return new LoginResponse(
                 tokens.accessToken(),
                 tokens.refreshToken(),
-                user.getUserId(),
+                user.getId(),
                 user.getNickname());
     }
 
@@ -116,8 +116,8 @@ public class AuthService {
     }
 
     private TokenResponse issueTokens(User user) {
-        String accessToken = jwtProvider.createAccessToken(user.getUserId());
-        String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
+        String accessToken = jwtProvider.createAccessToken(user.getId());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
 
         refreshTokenRepository.save(RefreshToken.create(
                 user,

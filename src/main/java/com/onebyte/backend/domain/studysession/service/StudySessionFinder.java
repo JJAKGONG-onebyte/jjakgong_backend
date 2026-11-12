@@ -29,7 +29,7 @@ public class StudySessionFinder {
      * @throws CustomException 404 SESSION_NOT_FOUND: 없거나 다른 사용자의 세션
      */
     public StudySession getOwnedSession(Long sessionId, Long userId) {
-        return studySessionRepository.findByIdAndUser_UserId(sessionId, userId)
+        return studySessionRepository.findByIdAndUser_Id(sessionId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
     }
 

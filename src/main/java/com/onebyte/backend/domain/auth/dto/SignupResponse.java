@@ -11,7 +11,7 @@ public record SignupResponse(Long userId, String email, String nickname, Long ch
 
     public static SignupResponse from(User user) {
         return new SignupResponse(
-                user.getUserId(),
+                user.getId(),
                 user.getEmail(),
                 user.getNickname(),
                 user.getCharacter().getCharacterId(),
