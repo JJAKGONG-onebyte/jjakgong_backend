@@ -112,4 +112,16 @@ public class StudySession extends BaseEntity {
     public void updateLastActivity() {
         this.lastActivityAt = LocalDateTime.now();
     }
+
+    /** 10분 넘게 활동이 없는 세션인지 (비정상 종료 판단) */
+    public boolean isInactiveSince(LocalDateTime threshold) {
+        return lastActivityAt.isBefore(threshold);
+    }
+
+    /** 세션 종료. 학습 시간은 서비스에서 휴식 시간을 뺀 값으로 계산해 넘긴다. */
+    public void end(LocalDateTime endedAt, SessionEndType endType, int recordedMinutes) {
+        this.endedAt = endedAt;
+        this.endType = endType;
+        this.recordedMinutes = recordedMinutes;
+    }
 }

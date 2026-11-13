@@ -10,4 +10,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
 
     /** 본인 세션만 조회 (남의 세션이면 빈 값) */
     Optional<StudySession> findByIdAndUser_Id(Long sessionId, Long userId);
+
+    /** 사용자의 진행 중(종료되지 않은) 세션 */
+    Optional<StudySession> findFirstByUser_IdAndEndedAtIsNullOrderByStartedAtDesc(Long userId);
 }
