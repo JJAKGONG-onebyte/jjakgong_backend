@@ -68,7 +68,30 @@ public class UserStudySetting {
         return setting;
     }
 
+    /** 마지막으로 사용한 학습 화면 모드 저장 */
     public void changeScreenMode(ScreenMode screenMode) {
         this.screenMode = screenMode;
+    }
+
+    /** 뽀모도로 학습/휴식 시간 변경 */
+    public void updatePomodoro(int studyMinutes, int breakMinutes) {
+        this.studyMinutes = studyMinutes;
+        this.breakMinutes = breakMinutes;
+    }
+
+    /** 집중 트래킹 ON/OFF. 켜면 웹캠도 함께 켜진다 (트래킹은 웹캠이 필요) */
+    public void changeFocusTracking(boolean enabled) {
+        this.focusTrackingEnabled = enabled;
+        if (enabled) {
+            this.webcamEnabled = true;
+        }
+    }
+
+    /** 웹캠 ON/OFF. 끄면 집중 트래킹도 함께 꺼진다 */
+    public void changeWebcam(boolean enabled) {
+        this.webcamEnabled = enabled;
+        if (!enabled) {
+            this.focusTrackingEnabled = false;
+        }
     }
 }
