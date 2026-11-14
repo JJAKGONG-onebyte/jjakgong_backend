@@ -82,16 +82,12 @@ public class UserStudySetting {
     /** 집중 트래킹 ON/OFF. 켜면 웹캠도 함께 켜진다 (트래킹은 웹캠이 필요) */
     public void changeFocusTracking(boolean enabled) {
         this.focusTrackingEnabled = enabled;
-        if (enabled) {
-            this.webcamEnabled = true;
-        }
+        this.webcamEnabled = enabled;
     }
 
     /** 웹캠 ON/OFF. 끄면 집중 트래킹도 함께 꺼진다 */
     public void changeWebcam(boolean enabled) {
+        this.focusTrackingEnabled = enabled;
         this.webcamEnabled = enabled;
-        if (!enabled) {
-            this.focusTrackingEnabled = false;
-        }
     }
 }
