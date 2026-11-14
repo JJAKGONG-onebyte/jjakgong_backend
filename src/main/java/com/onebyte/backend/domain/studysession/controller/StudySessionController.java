@@ -1,6 +1,9 @@
 package com.onebyte.backend.domain.studysession.controller;
 
 import com.onebyte.backend.domain.studysession.dto.ActiveSessionResponse;
+import com.onebyte.backend.domain.studysession.dto.BreakEndResponse;
+import com.onebyte.backend.domain.studysession.dto.BreakStartResponse;
+import com.onebyte.backend.domain.studysession.dto.EndSessionResponse;
 import com.onebyte.backend.domain.studysession.dto.HeartbeatResponse;
 import com.onebyte.backend.domain.studysession.dto.SessionResponse;
 import com.onebyte.backend.domain.studysession.dto.StartSessionRequest;
@@ -49,5 +52,30 @@ public class StudySessionController {
             @AuthenticationPrincipal Long userId,
             @PathVariable Long sessionId) {
         return ResponseEntity.ok(ApiResponse.ok(studySessionService.heartbeat(sessionId, userId)));
+    }
+
+    @Operation(summary = "휴식 시작", description = "진행 중 세션에서 휴식을 시작한다. 휴식 중에도 heartbeat는 계속 보내야 한다.")
+    @PostMapping("/{sessionId}/breaks")
+    public ResponseEntity<ApiResponse<BreakStartResponse>> startBreak(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long sessionId) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok(studySessionService.startBreak(sessionId, userId)));
+    }
+
+    @Operation(summary = "휴식 종료", description = "진행 중인 휴식을 끝내고 누적 휴식 시간을 반환한다.")
+    @PostMapping("/{sessionId}/breaks/end")
+    public ResponseEntity<ApiResponse<BreakEndResponse>> endBreak(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long sessionId) {
+        return ResponseEntity.ok(ApiResponse.ok(studySessionService.endBreak(sessionId, userId)));
+    }
+
+    @Operation(summary = "학습 종료", description = "학습 시간(휴식 제외)을 기록하고 문제 풀이·집중 이벤트 통계를 반환한다.")
+    @PostMapping("/{sessionId}/end")
+    public ResponseEntity<ApiResponse<EndSessionResponse>> end(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long sessionId) {
+        return ResponseEntity.ok(ApiResponse.ok(studySessionService.end(sessionId, userId)));
     }
 }
