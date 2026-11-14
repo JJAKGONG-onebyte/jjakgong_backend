@@ -1,3 +1,4 @@
+
 package com.onebyte.backend.domain.studysession.repository;
 
 import com.onebyte.backend.domain.studysession.entity.StudySession;

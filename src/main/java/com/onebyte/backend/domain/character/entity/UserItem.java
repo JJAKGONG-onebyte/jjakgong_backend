@@ -33,7 +33,7 @@ public class UserItem {
 
     public static UserItem of(User user, Item item) {
         UserItem userItem = new UserItem();
-        userItem.id = new UserItemId(user.getId(), item.getId());
+        userItem.id = new UserItemId(user.getId(), item.getId());   // user.getId() → user.getId()
         userItem.user = user;
         userItem.item = item;
         userItem.acquiredAt = LocalDateTime.now();
