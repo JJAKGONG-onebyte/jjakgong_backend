@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.stream.Collectors;
 
@@ -86,5 +89,23 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ApiResponse<Void>> build(ErrorCode code, String message) {
         return ResponseEntity.status(code.getStatus()).body(ApiResponse.error(code, message));
+    }
+
+    // 업로드 용량 초과 (컨트롤러에 들어오기 전에 발생)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSize(MaxUploadSizeExceededException e) {
+        return build(ErrorCode.FILE_TOO_LARGE, ErrorCode.FILE_TOO_LARGE.getMessage());
+    }
+
+    // multipart 요청에 file 파트가 없는 경우
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMissingPart(MissingServletRequestPartException e) {
+        return build(ErrorCode.INVALID_INPUT, e.getRequestPartName() + " 파일이 필요합니다.");
+    }
+
+    // multipart/form-data가 아닌 요청
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException e) {
+        return build(ErrorCode.INVALID_INPUT, "지원하지 않는 Content-Type입니다.");
     }
 }

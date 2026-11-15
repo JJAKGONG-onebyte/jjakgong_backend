@@ -60,4 +60,9 @@ public class StudyMaterial {
         this.selected = false;
         this.uploadedAt = LocalDateTime.now();
     }
+
+    /** 표시 이름 변경 */
+    public void rename(String name) {
+        this.name = name;
+    }
 }
