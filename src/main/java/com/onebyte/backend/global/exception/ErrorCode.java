@@ -33,7 +33,13 @@ public enum ErrorCode {
     NOT_ON_BREAK(HttpStatus.CONFLICT, "진행 중인 휴식이 없습니다."),
 
     // ===== 학습 자료 =====
-    MATERIAL_NOT_FOUND(HttpStatus.NOT_FOUND, "선택한 학습자료를 찾을 수 없습니다.");
+    MATERIAL_NOT_FOUND(HttpStatus.NOT_FOUND, "선택한 학습자료를 찾을 수 없습니다."),
+    MATERIAL_FILE_MISSING(HttpStatus.NOT_FOUND, "자료 파일을 찾을 수 없습니다."),
+    EMPTY_FILE(HttpStatus.BAD_REQUEST, "비어 있는 파일은 업로드할 수 없습니다."),
+    UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, "PDF, TXT 파일만 업로드할 수 있습니다."),
+    INVALID_FILE_CONTENT(HttpStatus.BAD_REQUEST, "파일 내용이 형식과 맞지 않습니다."),
+    FILE_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "파일 용량은 10MB 이하여야 합니다."),
+    FILE_STORAGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
 
     private final HttpStatus status;
     private final String message;
