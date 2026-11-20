@@ -58,6 +58,10 @@ public class UserCharacter {
         return uc;
     }
 
+    public void changeColor(String color) {
+        this.color = color;
+    }
+
     /** 가입 시 선택한 기본 캐릭터로 최초 생성: 이름은 기본 캐릭터 이름, 색상은 기본값 */
     public static UserCharacter createInitial(User user, BaseCharacter base) {
         String name = base.getName().length() > NAME_MAX_LENGTH
