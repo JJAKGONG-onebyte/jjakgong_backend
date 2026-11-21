@@ -4,7 +4,11 @@ import com.onebyte.backend.domain.material.entity.StudyMaterial;
 import com.onebyte.backend.domain.studysession.dto.ActiveSessionResponse;
 import com.onebyte.backend.domain.studysession.dto.BreakEndResponse;
 import com.onebyte.backend.domain.studysession.dto.BreakStartResponse;
+import com.onebyte.backend.domain.studysession.dto.ChangeMaterialRequest;
 import com.onebyte.backend.domain.studysession.dto.EndSessionResponse;
+import com.onebyte.backend.domain.studysession.dto.FocusTrackingRequest;
+import com.onebyte.backend.domain.studysession.dto.FocusTrackingResponse;
+import com.onebyte.backend.domain.studysession.dto.MaterialChangeResponse;
 import com.onebyte.backend.domain.studysession.dto.HeartbeatResponse;
 import com.onebyte.backend.domain.studysession.dto.SessionResponse;
 import com.onebyte.backend.domain.studysession.dto.StartSessionRequest;
@@ -159,9 +163,12 @@ public class StudySessionService {
         }
         studySessionCloser.closeByUser(session, now);
 
-        EndSessionResponse.FocusEventStats focusEventStats = session.isFocusTrackingEnabled()
-                ? studySessionStatsReader.readFocusEventStats(session.getId())
-                : null;
+        // 종료 시점에 꺼져 있어도 세션 중 기록된 이벤트가 있으면 통계를 반환
+        EndSessionResponse.FocusEventStats focusEventStats =
+                studySessionStatsReader.readFocusEventStats(session.getId());
+        if (!session.isFocusTrackingEnabled() && hasNoFocusEvent(focusEventStats)) {
+            focusEventStats = null;
+        }
         return EndSessionResponse.of(
                 session,
                 sumEndedBreakSeconds(session.getId()) / 60,
@@ -185,6 +192,30 @@ public class StudySessionService {
         }
         studySessionCloser.closeAsInactive(session);
         return true;
+    }
+
+    /** 세션 자료 변경 (한 세션에 자료 한 개, 교체 방식) */
+    @Transactional(noRollbackFor = CustomException.class)
+    public MaterialChangeResponse changeMaterial(Long sessionId, Long userId, ChangeMaterialRequest request) {
+        StudySession session = studySessionFinder.getActiveSession(sessionId, userId);
+        session.changeMaterial(findOwnedMaterial(request.materialId(), userId));
+        return MaterialChangeResponse.from(session);
+    }
+
+    /** 세션 집중 트래킹 ON/OFF (이번 세션에만 적용, 학습 설정은 바꾸지 않음) */
+    @Transactional(noRollbackFor = CustomException.class)
+    public FocusTrackingResponse changeFocusTracking(Long sessionId, Long userId, FocusTrackingRequest request) {
+        if (request == null || request.enabled() == null) {
+            throw new CustomException(ErrorCode.MISSING_ENABLED);
+        }
+        StudySession session = studySessionFinder.getActiveSession(sessionId, userId);
+        session.changeFocusTracking(request.enabled());
+        return FocusTrackingResponse.from(session);
+    }
+
+    private boolean hasNoFocusEvent(EndSessionResponse.FocusEventStats stats) {
+        return stats.awayCount() == 0 && stats.gazeOffCount() == 0
+                && stats.drowsyCount() == 0 && stats.falsePositiveCount() == 0;
     }
 
     private long sumEndedBreakSeconds(Long sessionId) {
