@@ -38,6 +38,7 @@ public enum ErrorCode {
     NO_ACTIVE_SESSION(HttpStatus.NOT_FOUND, "진행 중인 학습 세션이 없습니다."),
     ALREADY_ON_BREAK(HttpStatus.CONFLICT, "이미 휴식 중입니다."),
     NOT_ON_BREAK(HttpStatus.CONFLICT, "진행 중인 휴식이 없습니다."),
+    MISSING_ENABLED(HttpStatus.BAD_REQUEST, "enabled 값은 필수입니다."),
 
     // ===== 학습 자료 =====
     MATERIAL_NOT_FOUND(HttpStatus.NOT_FOUND, "선택한 학습자료를 찾을 수 없습니다."),
