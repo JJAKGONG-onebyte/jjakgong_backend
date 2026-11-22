@@ -25,6 +25,16 @@ public interface ScheduleOccurrenceRepository extends JpaRepository<ScheduleOccu
                                          @Param("occurrenceDate") LocalDate occurrenceDate,
                                          @Param("userId") Long userId);
 
+    /** 한 일정의 fromDate 이후(포함) 회차 상태 전체 (반복 일정 이후 전체 수정 시 사용) */
+    @Query("""
+            select o from ScheduleOccurrence o
+            where o.id.scheduleId = :scheduleId
+              and o.id.occurrenceDate >= :fromDate
+            order by o.id.occurrenceDate
+            """)
+    List<ScheduleOccurrence> findAllFrom(@Param("scheduleId") Long scheduleId,
+                                         @Param("fromDate") LocalDate fromDate);
+
     /**
      * 여러 일정의 회차 상태 중 [startDate, endDate] 구간과 관련된 것.
      * 발생일이 구간 안이거나, 날짜를 옮긴 결과(overrideDate)가 구간 안인 회차를 모두 가져온다.
