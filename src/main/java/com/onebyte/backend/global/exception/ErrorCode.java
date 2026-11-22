@@ -30,6 +30,13 @@ public enum ErrorCode {
     ITEM_NOT_OWNED(HttpStatus.FORBIDDEN, "보유하지 않은 아이템입니다."),
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 캐릭터입니다."),
 
+    // ===== 일정 =====
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 일정을 찾을 수 없습니다."),
+    TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 제목은 필수 입력 항목입니다."),
+    INVALID_RECURRENCE(HttpStatus.BAD_REQUEST, "반복 설정이 올바르지 않습니다."),
+    INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "조회 시작일은 종료일보다 늦을 수 없습니다."),
+    INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "날짜 형식은 YYYY-MM-DD이어야 합니다."),
+
     // ===== 학습 세션 =====
     SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "학습 세션을 찾을 수 없습니다."),
     SESSION_ALREADY_ENDED(HttpStatus.CONFLICT, "이미 종료된 학습 세션입니다."),
