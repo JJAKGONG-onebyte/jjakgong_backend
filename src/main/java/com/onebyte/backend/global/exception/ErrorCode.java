@@ -49,6 +49,13 @@ public enum ErrorCode {
     NOT_ON_BREAK(HttpStatus.CONFLICT, "진행 중인 휴식이 없습니다."),
     MISSING_ENABLED(HttpStatus.BAD_REQUEST, "enabled 값은 필수입니다."),
 
+    // ===== 집중 이벤트 (내부 API) =====
+    INVALID_INTERNAL_KEY(HttpStatus.UNAUTHORIZED, "내부 API 인증에 실패했습니다."),
+    FOCUS_TRACKING_DISABLED(HttpStatus.CONFLICT, "집중 트래킹이 꺼진 세션에는 이벤트를 기록할 수 없습니다."),
+    INVALID_EVENT_TYPE(HttpStatus.BAD_REQUEST, "정의되지 않은 이벤트 종류입니다."),
+    INVALID_EVENT_TIME(HttpStatus.BAD_REQUEST, "이벤트 시각이 올바르지 않습니다."),
+    MISSING_FEATURE_SAMPLE(HttpStatus.BAD_REQUEST, "오탐 이벤트에는 featureSample이 필요합니다."),
+
     // ===== 학습 자료 =====
     MATERIAL_NOT_FOUND(HttpStatus.NOT_FOUND, "선택한 학습자료를 찾을 수 없습니다."),
     MATERIAL_FILE_MISSING(HttpStatus.NOT_FOUND, "자료 파일을 찾을 수 없습니다."),
