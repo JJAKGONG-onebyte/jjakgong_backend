@@ -56,4 +56,14 @@ public class ScheduleEvent extends BaseEntity {
         this.deadlineDate = deadlineDate;
         this.priority = (priority != null) ? priority : SchedulePriority.MEDIUM;
     }
+
+    /** 일정 값 수정 (일반 일정 수정, 반복 일정 전체 수정). scheduleTime·deadlineDate는 null이면 삭제 */
+    public void update(String title, LocalDate scheduleDate, LocalTime scheduleTime,
+                       LocalDate deadlineDate, SchedulePriority priority) {
+        this.title = title;
+        this.scheduleDate = scheduleDate;
+        this.scheduleTime = scheduleTime;
+        this.deadlineDate = deadlineDate;
+        this.priority = priority;
+    }
 }

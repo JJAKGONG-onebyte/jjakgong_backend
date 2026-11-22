@@ -45,4 +45,17 @@ public class ScheduleRecurrenceRule extends BaseEntity {
         this.repeatEndDate = repeatEndDate;
         this.repeatCount = repeatCount;
     }
+
+    /** 반복 설정 변경 (endDate·count 둘 다 null이면 종료 조건 없는 반복) */
+    public void change(RecurrenceFrequency frequency, LocalDate repeatEndDate, Integer repeatCount) {
+        this.frequency = frequency;
+        this.repeatEndDate = repeatEndDate;
+        this.repeatCount = repeatCount;
+    }
+
+    /** 해당 날짜까지만 반복하도록 종료 (반복 시리즈 분할 시 기존 시리즈). 횟수 기준은 종료일 기준으로 바뀐다. */
+    public void endAt(LocalDate repeatEndDate) {
+        this.repeatEndDate = repeatEndDate;
+        this.repeatCount = null;
+    }
 }
