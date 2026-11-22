@@ -124,4 +124,15 @@ public class StudySession extends BaseEntity {
         this.endType = endType;
         this.recordedMinutes = recordedMinutes;
     }
+
+    /** 학습 중 자료 교체. null이면 자료 선택 해제 */
+    public void changeMaterial(StudyMaterial material) {
+        this.material = material;
+        this.materialName = (material != null) ? material.getName() : null;
+    }
+
+    /** 학습 중 집중 트래킹 ON/OFF (이번 세션에만 적용) */
+    public void changeFocusTracking(boolean enabled) {
+        this.focusTrackingEnabled = enabled;
+    }
 }

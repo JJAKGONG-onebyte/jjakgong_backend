@@ -3,7 +3,11 @@ package com.onebyte.backend.domain.studysession.controller;
 import com.onebyte.backend.domain.studysession.dto.ActiveSessionResponse;
 import com.onebyte.backend.domain.studysession.dto.BreakEndResponse;
 import com.onebyte.backend.domain.studysession.dto.BreakStartResponse;
+import com.onebyte.backend.domain.studysession.dto.ChangeMaterialRequest;
 import com.onebyte.backend.domain.studysession.dto.EndSessionResponse;
+import com.onebyte.backend.domain.studysession.dto.FocusTrackingRequest;
+import com.onebyte.backend.domain.studysession.dto.FocusTrackingResponse;
+import com.onebyte.backend.domain.studysession.dto.MaterialChangeResponse;
 import com.onebyte.backend.domain.studysession.dto.HeartbeatResponse;
 import com.onebyte.backend.domain.studysession.dto.SessionResponse;
 import com.onebyte.backend.domain.studysession.dto.StartSessionRequest;
@@ -16,8 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,5 +83,23 @@ public class StudySessionController {
             @AuthenticationPrincipal Long userId,
             @PathVariable Long sessionId) {
         return ResponseEntity.ok(ApiResponse.ok(studySessionService.end(sessionId, userId)));
+    }
+
+    @Operation(summary = "세션 자료 변경", description = "세션의 학습자료를 교체한다. materialId가 null이면 자료 선택 해제.")
+    @PutMapping("/{sessionId}/materials")
+    public ResponseEntity<ApiResponse<MaterialChangeResponse>> changeMaterial(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long sessionId,
+            @RequestBody ChangeMaterialRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok(studySessionService.changeMaterial(sessionId, userId, request)));
+    }
+
+    @Operation(summary = "세션 집중 트래킹 ON/OFF", description = "이번 세션에만 적용하며 학습 설정은 바꾸지 않는다.")
+    @PatchMapping("/{sessionId}/focus-tracking")
+    public ResponseEntity<ApiResponse<FocusTrackingResponse>> changeFocusTracking(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long sessionId,
+            @RequestBody(required = false) FocusTrackingRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok(studySessionService.changeFocusTracking(sessionId, userId, request)));
     }
 }
