@@ -37,6 +37,7 @@ public enum ErrorCode {
     INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "조회 시작일은 종료일보다 늦을 수 없습니다."),
     INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "날짜 형식은 YYYY-MM-DD이어야 합니다."),
     INVALID_UPDATE_SCOPE(HttpStatus.BAD_REQUEST, "반복 일정 수정 범위를 올바르게 지정해주세요."),
+    INVALID_DELETE_SCOPE(HttpStatus.BAD_REQUEST, "반복 일정 삭제 범위를 올바르게 지정해주세요."),
 
     // ===== 학습 세션 =====
     SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "학습 세션을 찾을 수 없습니다."),

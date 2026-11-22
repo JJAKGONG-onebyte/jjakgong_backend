@@ -1,5 +1,7 @@
 package com.onebyte.backend.domain.schedule.controller;
 
+import com.onebyte.backend.domain.schedule.dto.ScheduleCompletionRequest;
+import com.onebyte.backend.domain.schedule.dto.ScheduleCompletionResponse;
 import com.onebyte.backend.domain.schedule.dto.ScheduleCreateRequest;
 import com.onebyte.backend.domain.schedule.dto.ScheduleCreateResponse;
 import com.onebyte.backend.domain.schedule.dto.ScheduleDetailResponse;
@@ -7,12 +9,14 @@ import com.onebyte.backend.domain.schedule.dto.ScheduleListResponse;
 import com.onebyte.backend.domain.schedule.dto.ScheduleUpdateRequest;
 import com.onebyte.backend.domain.schedule.dto.ScheduleUpdateResponse;
 import com.onebyte.backend.domain.schedule.service.ScheduleService;
+import com.onebyte.backend.domain.schedule.service.ScheduleStatusService;
 import com.onebyte.backend.domain.schedule.service.ScheduleUpdateService;
 import com.onebyte.backend.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +33,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
     private final ScheduleUpdateService scheduleUpdateService;
+    private final ScheduleStatusService scheduleStatusService;
 
     /** 일정 등록 (일반 / 반복) */
     @PostMapping
@@ -69,5 +74,26 @@ public class ScheduleController {
             @RequestParam(required = false) String scope,
             @RequestBody ScheduleUpdateRequest request) {
         return ApiResponse.ok(scheduleUpdateService.update(userId, scheduleId, occurrenceDate, scope, request));
+    }
+
+    /** 완료 / 완료 취소 (토글이 아닌 명시적 값 설정). 반복 일정은 occurrenceDate 필수 */
+    @PatchMapping("/{scheduleId}/completion")
+    public ApiResponse<ScheduleCompletionResponse> changeCompletion(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long scheduleId,
+            @RequestParam(required = false) String occurrenceDate,
+            @RequestBody ScheduleCompletionRequest request) {
+        return ApiResponse.ok(scheduleStatusService.changeCompletion(userId, scheduleId, occurrenceDate, request));
+    }
+
+    /** 일정 삭제. 반복 일정은 scope(THIS / ALL) 필수, THIS는 occurrenceDate 필수 */
+    @DeleteMapping("/{scheduleId}")
+    public ApiResponse<Void> delete(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long scheduleId,
+            @RequestParam(required = false) String scope,
+            @RequestParam(required = false) String occurrenceDate) {
+        scheduleStatusService.delete(userId, scheduleId, scope, occurrenceDate);
+        return ApiResponse.ok();
     }
 }
