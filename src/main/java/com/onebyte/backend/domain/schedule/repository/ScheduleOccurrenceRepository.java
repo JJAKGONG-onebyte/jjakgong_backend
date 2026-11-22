@@ -3,6 +3,7 @@ package com.onebyte.backend.domain.schedule.repository;
 import com.onebyte.backend.domain.schedule.entity.ScheduleOccurrence;
 import com.onebyte.backend.domain.schedule.entity.ScheduleOccurrenceId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -34,6 +35,11 @@ public interface ScheduleOccurrenceRepository extends JpaRepository<ScheduleOccu
             """)
     List<ScheduleOccurrence> findAllFrom(@Param("scheduleId") Long scheduleId,
                                          @Param("fromDate") LocalDate fromDate);
+
+    /** 한 일정의 회차 상태 전체 삭제 (일정 삭제 시) */
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("delete from ScheduleOccurrence o where o.id.scheduleId = :scheduleId")
+    int deleteAllByScheduleId(@Param("scheduleId") Long scheduleId);
 
     /**
      * 여러 일정의 회차 상태 중 [startDate, endDate] 구간과 관련된 것.

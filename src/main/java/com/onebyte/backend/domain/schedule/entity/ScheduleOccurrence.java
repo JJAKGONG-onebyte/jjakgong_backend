@@ -113,6 +113,27 @@ public class ScheduleOccurrence {
         this.overridePriority = null;
     }
 
+    // ===== 완료 / 개별 삭제 =====
+
+    /** 완료 처리 (이미 완료된 회차면 완료 시각을 유지) */
+    public void complete(LocalDateTime completedAt) {
+        if (!this.isCompleted) {
+            this.completedAt = completedAt;
+        }
+        this.isCompleted = true;
+    }
+
+    /** 완료 취소 */
+    public void cancelCompletion() {
+        this.isCompleted = false;
+        this.completedAt = null;
+    }
+
+    /** 이 회차만 삭제 (반복 규칙은 유지) */
+    public void markDeleted() {
+        this.isDeleted = true;
+    }
+
     /** 완료·삭제 상태 복사 (반복 시리즈를 나누거나 날짜를 옮길 때 회차 상태 이전) */
     public void copyStatusFrom(ScheduleOccurrence other) {
         this.isCompleted = other.isCompleted;
