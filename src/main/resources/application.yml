@@ -42,3 +42,6 @@ app:
 
 password-reset:
   hmac-secret: ${RESET_CODE_SECRET}
+
+internal:
+  api-key: ${INTERNAL_API_KEY:}
